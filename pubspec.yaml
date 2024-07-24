@@ -41,6 +41,8 @@ dependencies:
   intl_phone_field: ^3.2.0
   flutter_conditional_rendering: ^2.1.0
   cherry_toast: ^1.11.0
+  qr_flutter: ^4.1.0
+  qr_code_scanner: ^1.0.1
 
 dev_dependencies:
   flutter_test:

@@ -2,6 +2,7 @@ import 'package:cherry_toast/cherry_toast.dart';
 import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:tasky/modules/Home_Task/cubit/hometask_cubit.dart';
 import 'package:tasky/shared/resources/asset_manager.dart';
 import 'package:tasky/shared/resources/color_manager.dart';
@@ -11,11 +12,23 @@ import '../profile/profile_screen.dart';
 import 'widget/my_task_details_list.dart';
 import 'widget/my_task_progress.dart';
 
-class HomeTaskScreen extends StatelessWidget {
+class HomeTaskScreen extends StatefulWidget {
   const HomeTaskScreen({super.key});
 
   @override
+  State<HomeTaskScreen> createState() => _HomeTaskScreenState();
+}
+
+class _HomeTaskScreenState extends State<HomeTaskScreen> {
+  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+
+  Barcode? result;
+
+  QRViewController? controller;
+
+  @override
   Widget build(BuildContext context) {
+
     return BlocProvider(
       create: (context) => HomeTaskCubit()..getTasks(),
       child: BlocConsumer<HomeTaskCubit, HomeTaskState>(
@@ -84,7 +97,32 @@ class HomeTaskScreen extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(32),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('QR Code Scanner'),
+                        content: SizedBox(
+                          width: 300,
+                          height: 300,
+                          child: QRView(
+                            key: qrKey,
+                            onQRViewCreated: (controller) {
+                              this.controller = controller;
+                              controller.scannedDataStream.listen((event) {
+                                setState(() {
+                                  result = event;
+                                  print(result!.code);
+                                  controller.stopCamera();
+                                  Navigator.pop(context);
+                                });
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                   child: Image.asset(ImageAssets.qrIcon),
                 ),
                 const SizedBox(height: 14,),

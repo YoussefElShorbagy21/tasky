@@ -6,6 +6,8 @@ import 'package:tasky/models/TasksModel/TasksModel.dart';
 import 'package:tasky/modules/Home_Task/cubit/hometask_cubit.dart';
 import 'package:tasky/shared/resources/asset_manager.dart';
 
+import '../../Task_Details/task_details_screen.dart';
+
 class MyTaskDetailsItem extends StatefulWidget {
   const MyTaskDetailsItem({super.key, required this.taskModel});
 
@@ -47,7 +49,10 @@ class _MyTaskDetailsItemState extends State<MyTaskDetailsItem> {
       builder: (context, state) {
         var cubit = HomeTaskCubit.get(context);
         return InkWell(
-          onTap: () {},
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) =>
+            TaskDetailsScreen(taskModel: widget.taskModel)));
+          },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 10),
             child: Row(
