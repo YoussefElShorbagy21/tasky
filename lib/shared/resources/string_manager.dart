@@ -8,4 +8,6 @@ class AppStrings{
   static const endPointLogout = 'auth/logout';
 
   static const endPointProfile = 'auth/profile' ;
+
+  static const endPointTasks = 'todos' ;
 }

@@ -18,3 +18,25 @@ final class LogoutErrorState extends HomeTaskState {
 
   LogoutErrorState(this.message);
 }
+
+final class ChangeIndexState extends HomeTaskState {}
+
+final class TasksLoadingState extends HomeTaskState {}
+
+final class TasksSuccessState extends HomeTaskState {}
+
+final class TasksErrorState extends HomeTaskState {
+  final String message;
+
+  TasksErrorState(this.message);
+}
+
+final class DeleteTaskLoadingState extends HomeTaskState {}
+
+final class DeleteTaskSuccessState extends HomeTaskState {}
+
+final class DeleteTaskErrorState extends HomeTaskState {
+  final String message;
+
+  DeleteTaskErrorState(this.message);
+}

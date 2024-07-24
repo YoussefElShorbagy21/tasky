@@ -8,108 +8,104 @@ import 'package:tasky/shared/resources/color_manager.dart';
 
 import '../../shared/components/constants.dart';
 import '../profile/profile_screen.dart';
+import 'widget/my_task_details_list.dart';
+import 'widget/my_task_progress.dart';
 
 class HomeTaskScreen extends StatelessWidget {
   const HomeTaskScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<HomeTaskCubit, HomeTaskState>(
-      listener: (context, state) {
-        if(state is LogoutSuccessState){
-          CherryToast.success(
-            title: const Text(' تم تسجيل الخروج بنجاح'),
-            animationType: AnimationType.fromTop,
-          ).show(context);
-        }
-      },
-      builder: (context, state) {
-        var cubit = HomeTaskCubit.get(context);
-        return Scaffold(
-          appBar: AppBar(
-            elevation: 0,
-            actions: [
-              IconButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
-                },
-                icon: const Icon(Icons.person_2_outlined),
-              ),
+    return BlocProvider(
+      create: (context) => HomeTaskCubit()..getTasks(),
+      child: BlocConsumer<HomeTaskCubit, HomeTaskState>(
+        listener: (context, state) {
+          if (state is LogoutSuccessState) {
+            CherryToast.success(
+              title: const Text(' تم تسجيل الخروج بنجاح'),
+              animationType: AnimationType.fromTop,
+            ).show(context);
+          }
+        },
+        builder: (context, state) {
+          return Scaffold(
+            appBar: AppBar(
+              elevation: 0,
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => const ProfileScreen()));
+                  },
+                  icon: const Icon(Icons.person_2_outlined),
+                ),
 
-              IconButton(
-                onPressed: () {
-                  singOut(context);
-                  // cubit.logOut();
-                },
-                icon: Icon(Icons.logout_outlined, color: ColorManager.primary,),
-              ),
-            ],
-            title: const Text(
-              'Logo',
-              style: TextStyle(
-                color: Color(0xFF24252C),
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
+                IconButton(
+                  onPressed: () {
+                    singOut(context);
+                    // cubit.logOut();
+                  },
+                  icon: Icon(
+                    Icons.logout_outlined, color: ColorManager.primary,),
+                ),
+              ],
+              title: const Text(
+                'Logo',
+                style: TextStyle(
+                  color: Color(0xFF24252C),
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
-          ),
-          body: const SingleChildScrollView(
-            child: Padding(
+            body: const Padding(
               padding: EdgeInsets.all(22.0),
-              child: Column(
-                children: [
-                  MyTaskProgress(),
+              child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: MyTaskProgress(),
+                  ),
+
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 16,
+                    ),
+                  ),
+                  MyTaskDetailsList(),
                 ],
               ),
             ),
-          ),
-          floatingActionButton: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              FloatingActionButton(
-                backgroundColor: ColorManager.secondary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(32),
+            floatingActionButton: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                FloatingActionButton(
+                  heroTag: 'qr',
+                  backgroundColor: ColorManager.secondary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(32),
+                  ),
+                  onPressed: () {},
+                  child: Image.asset(ImageAssets.qrIcon),
                 ),
-                onPressed: () {
-                },
-                child: Image.asset(ImageAssets.qrIcon),
-              ),
-              const SizedBox(height: 14,),
-              FloatingActionButton(
-                backgroundColor: ColorManager.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(32),
+                const SizedBox(height: 14,),
+                FloatingActionButton(
+                  heroTag: 'add',
+                  backgroundColor: ColorManager.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(32),
+                  ),
+                  onPressed: () {},
+                  child: const Icon(Icons.add, color: Colors.white,),
                 ),
-                onPressed: () {
-                },
-                child: const Icon(Icons.add, color: Colors.white,),
-              ),
-            ],
-          ),
-        );
-      },
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }
 
-class MyTaskProgress extends StatelessWidget {
-  const MyTaskProgress({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return const Column(
-      children: [
-        Text(
-          'My Tasks',
-          style: TextStyle(
-            color: Color(0x9924252C),
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-          ),
-        )
-      ],
-    );
-  }
-}
+
 
