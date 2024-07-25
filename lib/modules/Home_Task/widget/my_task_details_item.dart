@@ -23,23 +23,22 @@ class _MyTaskDetailsItemState extends State<MyTaskDetailsItem> {
   Widget build(BuildContext context) {
     return BlocConsumer<HomeTaskCubit, HomeTaskState>(
       listener: (context, state) {
-        var cubit = HomeTaskCubit.get(context) ;
+        var cubit = HomeTaskCubit.get(context);
         if (state is DeleteTaskSuccessState) {
           CherryToast.success(
             title: const Text('Task Deleted Successfully'),
             animationType: AnimationType.fromTop,
           ).show(context);
 
-          if(cubit.i == 0){
+          if (cubit.i == 0) {
             cubit.getTasks();
-          }else if(cubit.i == 1){
+          } else if (cubit.i == 1) {
             cubit.getTasks(status: 'inprogress');
-          }else if(HomeTaskCubit.get(context).i == 2){
+          } else if (HomeTaskCubit.get(context).i == 2) {
             cubit.getTasks(status: 'waiting');
-          }else if(HomeTaskCubit.get(context).i == 3){
+          } else if (HomeTaskCubit.get(context).i == 3) {
             cubit.getTasks(status: 'finished');
           }
-
         } else if (state is DeleteTaskErrorState) {
           CherryToast.error(
             title: Text(state.message),
@@ -51,8 +50,11 @@ class _MyTaskDetailsItemState extends State<MyTaskDetailsItem> {
         var cubit = HomeTaskCubit.get(context);
         return InkWell(
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) =>
-            TaskDetailsScreen(id: widget.taskModel.id ?? '')));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        TaskDetailsScreen(id: widget.taskModel.id ?? '')));
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 10),
@@ -81,15 +83,14 @@ class _MyTaskDetailsItemState extends State<MyTaskDetailsItem> {
                             ),
                           ),
                           Container(
-                            padding:
-                            const EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 6, vertical: 2),
                             decoration: ShapeDecoration(
                               color: widget.taskModel.status == 'waiting'
                                   ? const Color(0xFFFFE4F2)
                                   : widget.taskModel.status == 'inprogress'
-                                  ? const Color(0xFFF0ECFF)
-                                  : const Color(0xFFE3F2FF),
+                                      ? const Color(0xFFF0ECFF)
+                                      : const Color(0xFFE3F2FF),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(5)),
                             ),
@@ -104,9 +105,9 @@ class _MyTaskDetailsItemState extends State<MyTaskDetailsItem> {
                                     color: widget.taskModel.status == 'waiting'
                                         ? const Color(0xFFFF7D53)
                                         : widget.taskModel.status ==
-                                        'inprogress'
-                                        ? const Color(0xFF5F33E1)
-                                        : const Color(0xFF0087FF),
+                                                'inprogress'
+                                            ? const Color(0xFF5F33E1)
+                                            : const Color(0xFF0087FF),
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -116,11 +117,11 @@ class _MyTaskDetailsItemState extends State<MyTaskDetailsItem> {
                           )
                         ],
                       ),
-
                       Row(
                         children: [
                           Expanded(
-                            child: Text(widget.taskModel.desc ?? '',
+                            child: Text(
+                              widget.taskModel.desc ?? '',
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                               style: const TextStyle(
@@ -132,7 +133,6 @@ class _MyTaskDetailsItemState extends State<MyTaskDetailsItem> {
                           ),
                         ],
                       ),
-
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -142,21 +142,21 @@ class _MyTaskDetailsItemState extends State<MyTaskDetailsItem> {
                                 Icons.flag_outlined,
                                 size: 12,
                                 color: widget.taskModel.priority == 'low' ||
-                                    widget.taskModel.priority == 'Low'
+                                        widget.taskModel.priority == 'Low'
                                     ? const Color(0xFF0087FF)
                                     : widget.taskModel.priority == 'medium'
-                                    ? const Color(0xFF5F33E1)
-                                    : const Color(0xFFFF7D53),
+                                        ? const Color(0xFF5F33E1)
+                                        : const Color(0xFFFF7D53),
                               ),
                               Text(
                                 widget.taskModel.priority ?? '',
                                 style: TextStyle(
                                   color: widget.taskModel.priority == 'low' ||
-                                      widget.taskModel.priority == 'Low'
+                                          widget.taskModel.priority == 'Low'
                                       ? const Color(0xFF0087FF)
                                       : widget.taskModel.priority == 'medium'
-                                      ? const Color(0xFF5F33E1)
-                                      : const Color(0xFFFF7D53),
+                                          ? const Color(0xFF5F33E1)
+                                          : const Color(0xFFFF7D53),
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -169,7 +169,6 @@ class _MyTaskDetailsItemState extends State<MyTaskDetailsItem> {
                               color: Color(0x9924252C),
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
-
                             ),
                           ),
                         ],
@@ -179,7 +178,8 @@ class _MyTaskDetailsItemState extends State<MyTaskDetailsItem> {
                 ),
                 PopupMenuButton<String>(
                   onSelected: (value) {
-                    if (value == 'edit') {} else if (value == 'delete') {}
+                    if (value == 'edit') {
+                    } else if (value == 'delete') {}
                   },
                   icon: const Icon(Icons.more_vert),
                   color: Colors.white,
@@ -190,9 +190,13 @@ class _MyTaskDetailsItemState extends State<MyTaskDetailsItem> {
                     return [
                       PopupMenuItem<String>(
                           value: 'edit',
-                          onTap:(){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                                 EditTaskScreen(task: widget.taskModel,)));
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => EditTaskScreen(
+                                          task: widget.taskModel,
+                                        )));
                           },
                           child: const Opacity(
                             opacity: 0.87,
@@ -204,8 +208,7 @@ class _MyTaskDetailsItemState extends State<MyTaskDetailsItem> {
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
-                          )
-                      ),
+                          )),
                       PopupMenuItem<String>(
                         value: 'delete',
                         child: const Opacity(

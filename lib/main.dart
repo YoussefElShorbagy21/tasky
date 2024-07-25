@@ -12,6 +12,7 @@ import 'package:tasky/shared/resources/color_manager.dart';
 
 import 'modules/Home_Task/home_task_screen.dart';
 import 'modules/Login/login_screen.dart';
+import 'modules/Task_Details/cubit/task_details_cubit.dart';
 import 'modules/profile/cubit/profile_cubit.dart';
 import 'modules/splash/splash_screen.dart';
 import 'modules/start_screen/start_screen_view.dart';
@@ -53,6 +54,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<ProfileCubit>(create: (context) => ProfileCubit()..getUser()),
         BlocProvider<HomeTaskCubit>(create: (context) => HomeTaskCubit()..getTasks()),
         BlocProvider<AddTaskCubit>(create: (context) => AddTaskCubit()),
+        BlocProvider<TaskDetailsCubit>(create: (context) => TaskDetailsCubit()),
       ],
       child: MaterialApp(
         title: 'Tasky',

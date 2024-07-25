@@ -1,3 +1,5 @@
+import 'package:cherry_toast/cherry_toast.dart';
+import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -18,32 +20,7 @@ class TaskDetailsScreen extends StatelessWidget {
     return BlocProvider(
   create: (context) => TaskDetailsCubit()..getTasksDetails(id: id),
   child: BlocConsumer<TaskDetailsCubit, TaskDetailsState>(
-        listener: (context, state) {
-       /*   var cubit = HomeTaskCubit.get(context);
-          if(state is DeleteTaskSuccessState){
-            CherryToast.success(
-              title: const Text('Task Deleted Successfully'),
-              animationType: AnimationType.fromTop,
-            ).show(context);
-            Navigator.pop(context);
-            print(cubit.i);
-            if(cubit.i == 0){
-              cubit.getTasks();
-            }else if(cubit.i == 1){
-              cubit.getTasks(status: 'inprogress');
-            }else if(HomeTaskCubit.get(context).i == 2){
-              cubit.getTasks(status: 'waiting');
-            }else if(HomeTaskCubit.get(context).i == 3){
-              cubit.getTasks(status: 'finished');
-            }
-          }
-          else if(state is DeleteTaskErrorState){
-            CherryToast.error(
-              title: Text('state.message'),
-              animationType: AnimationType.fromTop,
-            ).show(context);
-          }*/
-        },
+        listener: (context, state) {},
         builder: (context, state) {
           var cubit = TaskDetailsCubit.get(context);
           return Scaffold(
@@ -71,6 +48,7 @@ class TaskDetailsScreen extends StatelessWidget {
                     }
                     else if (value == 'delete') {
                       HomeTaskCubit.get(context).deleteTask(taskId: cubit.tasksModelDetails?.id ?? '');
+                      Navigator.pop(context);
                     }
                   },
                   icon: const Icon(Icons.more_vert),

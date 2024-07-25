@@ -37,7 +37,6 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
     descriptionController.text = widget.task.desc ?? '';
     priorityController.text = widget.task.priority ?? '';
     statusController.text = widget.task.status ?? '' ;
-
     super.initState();
   }
 
@@ -51,7 +50,6 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
         animationType: AnimationType.fromTop,
       ).show(context);
       HomeTaskCubit.get(context).getTasks();
-      TaskDetailsCubit.get(context).getTasksDetails(id: widget.task.id ?? '');
       Navigator.pop(context);
     }
   },
