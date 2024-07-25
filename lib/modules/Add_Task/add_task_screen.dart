@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_conditional_rendering/conditional.dart';
+import 'package:tasky/modules/Add_Task/cubit/add_task_cubit.dart';
 import 'package:tasky/shared/resources/color_manager.dart';
 
 import '../../shared/components/components.dart';
@@ -22,8 +25,24 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
   final TextEditingController dueDateController = TextEditingController();
 
+  String priority = '' ;
+
+  String image = '';
+
   @override
   Widget build(BuildContext context) {
+    return BlocConsumer<AddTaskCubit, AddTaskState>(
+  listener: (context, state) {
+    var cubit = AddTaskCubit.get(context);
+    if(state is HomePostImagePickedSuccessState){
+      Navigator.pop(context);
+      cubit.uploadImage(image: cubit.postImage!);
+    }else if(state is UploadImageSuccess) {
+      image = state.imageUrl;
+    }
+  },
+  builder: (context, state) {
+    var cubit = AddTaskCubit.get(context);
     return Scaffold(
       appBar: AppBar(
           title: const Text(
@@ -243,20 +262,21 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                   underline: const SizedBox(),
                                   items: const [
                                     DropdownMenuItem(
-                                      value: 'Medium',
+                                      value: 'medium',
                                       child: Text('Medium '),
                                     ),
                                     DropdownMenuItem(
-                                      value: 'Low',
+                                      value: 'low',
                                       child: Text('Low '),
                                     ),
                                     DropdownMenuItem(
-                                      value: 'Heigh',
+                                      value: 'high',
                                       child: Text('Heigh '),
                                     ),
                                   ],
                                   onChanged: (value) {
                                     priorityController.text = '${value.toString()} Priority';
+                                    priority = value.toString();
                                   },
                                 ),
                               ),
@@ -348,31 +368,46 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 const SizedBox(
                   height: 28,
                 ),
-                ElevatedButton(
-                  onPressed: (){
-                    if(formKey.currentState!.validate()){}
-                  },
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                    backgroundColor: ColorManager.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                Conditional.single(
+                  context: context,
+                  conditionBuilder: (context) => state is! AddTaskLoading,
+                  widgetBuilder: (context) => ElevatedButton(
+                    onPressed: (){
+                      if(formKey.currentState!.validate()){
+                        cubit.addTask(
+                          title: titleController.text,
+                          desc: descriptionController.text,
+                          priority: priority,
+                          dueDate: dueDateController.text,
+                          image: image,
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 50),
+                      backgroundColor: ColorManager.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Add task',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 19,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        )
+                      ],
                     ),
                   ),
-                  child: const Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Add task',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 19,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      )
-                    ],
+                  fallbackBuilder: (context) => const Center(
+                    child: CircularProgressIndicator(),
                   ),
                 ),
               ],
@@ -381,6 +416,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         ),
       ),
     );
+  },
+);
   }
 }
 
