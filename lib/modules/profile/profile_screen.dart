@@ -19,7 +19,7 @@ class ProfileScreen extends StatelessWidget {
       child: BlocConsumer<ProfileCubit, ProfileState>(
         listener: (context, state) {},
         builder: (context, state) {
-          var cubit = ProfileCubit.get(context);
+          var cubit = ProfileCubit.get(context) ;
           return Scaffold(
               appBar: AppBar(
                   title: const Text(
@@ -37,7 +37,7 @@ class ProfileScreen extends StatelessWidget {
                     icon: Image.asset(ImageAssets.iconBack),
                   )
               ),
-              body: Column(
+              body: cubit.userModel == null   ? const Center(child: CircularProgressIndicator()): Column(
                 children: [
                   ProfileShow(
                     title: 'Name',

@@ -2,6 +2,7 @@ import 'package:cherry_toast/cherry_toast.dart';
 import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_conditional_rendering/conditional.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:tasky/modules/Home_Task/cubit/hometask_cubit.dart';
 import 'package:tasky/modules/Task_Details/task_details_screen.dart';
@@ -30,7 +31,6 @@ class _HomeTaskScreenState extends State<HomeTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return BlocConsumer<HomeTaskCubit, HomeTaskState>(
       listener: (context, state) {
         if (state is LogoutSuccessState) {
@@ -41,25 +41,29 @@ class _HomeTaskScreenState extends State<HomeTaskScreen> {
         }
       },
       builder: (context, state) {
+        var cubit = HomeTaskCubit.get(context);
         return Scaffold(
           appBar: AppBar(
             elevation: 0,
             actions: [
               IconButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(
-                      builder: (context) => const ProfileScreen()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ProfileScreen()));
                 },
                 icon: const Icon(Icons.person_2_outlined),
               ),
-
               IconButton(
                 onPressed: () {
                   singOut(context);
                   // cubit.logOut();
                 },
                 icon: Icon(
-                  Icons.logout_outlined, color: ColorManager.primary,),
+                  Icons.logout_outlined,
+                  color: ColorManager.primary,
+                ),
               ),
             ],
             title: const Text(
@@ -71,20 +75,33 @@ class _HomeTaskScreenState extends State<HomeTaskScreen> {
               ),
             ),
           ),
-          body: const Padding(
-            padding: EdgeInsets.all(22.0),
+          body: Padding(
+            padding: const EdgeInsets.all(22.0),
             child: CustomScrollView(
               slivers: [
-                SliverToBoxAdapter(
+                const SliverToBoxAdapter(
                   child: MyTaskProgress(),
                 ),
-
-                SliverToBoxAdapter(
+                const SliverToBoxAdapter(
                   child: SizedBox(
                     height: 16,
                   ),
                 ),
-                MyTaskDetailsList(),
+                state is TasksLoadingState
+                    ? const SliverToBoxAdapter(
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                    : cubit.tasksModel.isEmpty
+                        ? SliverToBoxAdapter(
+                            child: Center(
+                                child: Text("Empty Task",
+                                    style: TextStyle(
+                                      color: ColorManager.primary,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ))),
+                          )
+                        : const MyTaskDetailsList(),
               ],
             ),
           ),
@@ -115,7 +132,12 @@ class _HomeTaskScreenState extends State<HomeTaskScreen> {
                                 print(result!.code);
                                 controller.stopCamera();
                                 Navigator.pop(context);
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => TaskDetailsScreen(id: result!.code.toString(),)));
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => TaskDetailsScreen(
+                                              id: result!.code.toString(),
+                                            )));
                               });
                             });
                           },
@@ -126,7 +148,9 @@ class _HomeTaskScreenState extends State<HomeTaskScreen> {
                 },
                 child: Image.asset(ImageAssets.qrIcon),
               ),
-              const SizedBox(height: 14,),
+              const SizedBox(
+                height: 14,
+              ),
               FloatingActionButton(
                 heroTag: 'add',
                 backgroundColor: ColorManager.primary,
@@ -134,9 +158,15 @@ class _HomeTaskScreenState extends State<HomeTaskScreen> {
                   borderRadius: BorderRadius.circular(32),
                 ),
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) =>  const AddTaskScreen()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const AddTaskScreen()));
                 },
-                child: const Icon(Icons.add, color: Colors.white,),
+                child: const Icon(
+                  Icons.add,
+                  color: Colors.white,
+                ),
               ),
             ],
           ),
@@ -145,7 +175,3 @@ class _HomeTaskScreenState extends State<HomeTaskScreen> {
     );
   }
 }
-
-
-
-

@@ -99,7 +99,8 @@ class TaskDetailsScreen extends StatelessWidget {
                 ),
               ],
             ),
-            body: SingleChildScrollView(
+            body: cubit.tasksModelDetails == null ? const Center(child: CircularProgressIndicator()):
+            SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,

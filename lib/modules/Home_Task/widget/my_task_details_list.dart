@@ -12,9 +12,7 @@ class MyTaskDetailsList extends StatelessWidget {
     return BlocConsumer<HomeTaskCubit, HomeTaskState>(
       listener: (context, state) {},
       builder: (context, state) {
-        var cubit = HomeTaskCubit
-            .get(context)
-            .tasksModel;
+        var cubit = HomeTaskCubit.get(context).tasksModel;
         return SliverList.builder(
           itemCount: cubit.length,
           itemBuilder: (BuildContext context, int index) {
