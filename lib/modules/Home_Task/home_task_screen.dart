@@ -8,6 +8,7 @@ import 'package:tasky/shared/resources/asset_manager.dart';
 import 'package:tasky/shared/resources/color_manager.dart';
 
 import '../../shared/components/constants.dart';
+import '../Add_Task/add_task_screen.dart';
 import '../profile/profile_screen.dart';
 import 'widget/my_task_details_list.dart';
 import 'widget/my_task_progress.dart';
@@ -132,7 +133,9 @@ class _HomeTaskScreenState extends State<HomeTaskScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(32),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  AddTaskScreen()));
+                  },
                   child: const Icon(Icons.add, color: Colors.white,),
                 ),
               ],

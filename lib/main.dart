@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tasky/modules/Add_Task/cubit/add_task_cubit.dart';
 import 'package:tasky/modules/Home_Task/cubit/hometask_cubit.dart';
 import 'package:tasky/modules/Login/cubit/login_cubit.dart';
 import 'package:tasky/modules/Signup/cubit/signup_cubit.dart';
@@ -51,6 +52,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<SignupCubit>(create: (context) => SignupCubit()),
         BlocProvider<ProfileCubit>(create: (context) => ProfileCubit()..getUser()),
         BlocProvider<HomeTaskCubit>(create: (context) => HomeTaskCubit()..getTasks()),
+        BlocProvider<AddTaskCubit>(create: (context) => AddTaskCubit()),
       ],
       child: MaterialApp(
         title: 'Tasky',
