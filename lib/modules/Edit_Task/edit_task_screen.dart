@@ -5,8 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_conditional_rendering/conditional.dart';
 import 'package:tasky/models/TasksModel/TasksModel.dart';
 import 'package:tasky/modules/Home_Task/cubit/hometask_cubit.dart';
-import 'package:tasky/modules/Task_Details/cubit/task_details_cubit.dart';
-import 'package:tasky/modules/Task_Details/task_details_screen.dart';
 
 import '../../shared/components/components.dart';
 import '../../shared/resources/asset_manager.dart';

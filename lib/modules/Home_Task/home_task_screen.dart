@@ -2,7 +2,6 @@ import 'package:cherry_toast/cherry_toast.dart';
 import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_conditional_rendering/conditional.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:tasky/modules/Home_Task/cubit/hometask_cubit.dart';
 import 'package:tasky/modules/Task_Details/task_details_screen.dart';
