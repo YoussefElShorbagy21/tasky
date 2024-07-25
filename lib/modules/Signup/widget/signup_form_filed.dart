@@ -32,6 +32,8 @@ class SignupFormFiled extends StatelessWidget {
             animationType: AnimationType.fromTop,
           ).show(context);
           await CacheHelper.saveData(key: 'TokenId', value: state.successModel['access_token']);
+          await CacheHelper.saveData(key: 'refreshToken', value: state.successModel['refresh_token']);
+          await CacheHelper.saveData(key: 'ID',value: state.successModel['_id']);
           navigateFish(context, const HomeTaskScreen());
         }else if (state is RegisterErrorState) {
           CherryToast.error(

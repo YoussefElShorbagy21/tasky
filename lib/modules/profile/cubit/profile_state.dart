@@ -13,3 +13,13 @@ final class ProfileErrorState extends ProfileState {
 
   ProfileErrorState(this.message);
 }
+
+final class RefreshTokenLoadingState extends ProfileState {}
+
+final class RefreshTokenSuccessState extends ProfileState {}
+
+final class RefreshTokenErrorState extends ProfileState {
+  final String message;
+
+  RefreshTokenErrorState(this.message);
+}

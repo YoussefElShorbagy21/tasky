@@ -49,6 +49,8 @@ void navigateFish(BuildContext context, Widget widget) {
 
 String? token = CacheHelper.getData(key: 'TokenId');
 
+String? refreshToken = CacheHelper.getData(key: 'refreshToken');
+
 String? uid = CacheHelper.getData(key: 'ID');
 
 bool? onBoarding = CacheHelper.getData(key: 'onBoarding');

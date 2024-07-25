@@ -3,84 +3,80 @@ import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_conditional_rendering/conditional.dart';
-import 'package:tasky/modules/Add_Task/cubit/add_task_cubit.dart';
+import 'package:tasky/models/TasksModel/TasksModel.dart';
 import 'package:tasky/modules/Home_Task/cubit/hometask_cubit.dart';
-import 'package:tasky/shared/resources/color_manager.dart';
+import 'package:tasky/modules/Task_Details/cubit/task_details_cubit.dart';
+import 'package:tasky/modules/Task_Details/task_details_screen.dart';
 
 import '../../shared/components/components.dart';
 import '../../shared/resources/asset_manager.dart';
+import '../../shared/resources/color_manager.dart';
 
-class AddTaskScreen extends StatefulWidget {
-  const AddTaskScreen({super.key});
+class EditTaskScreen extends StatefulWidget {
+  const EditTaskScreen({super.key, required this.task});
+  final TasksModel task;
 
   @override
-  State<AddTaskScreen> createState() => _AddTaskScreenState();
+  State<EditTaskScreen> createState() => _EditTaskScreenState();
 }
 
-class _AddTaskScreenState extends State<AddTaskScreen> {
+class _EditTaskScreenState extends State<EditTaskScreen> {
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController titleController = TextEditingController();
 
   final TextEditingController descriptionController = TextEditingController();
 
   final TextEditingController priorityController = TextEditingController();
 
-  final TextEditingController dueDateController = TextEditingController();
+  final TextEditingController statusController = TextEditingController();
 
-  String priority = '' ;
+  @override
+  void initState() {
+    titleController.text = widget.task.title ?? '';
+    descriptionController.text = widget.task.desc ?? '';
+    priorityController.text = widget.task.priority ?? '';
+    statusController.text = widget.task.status ?? '' ;
 
-  String image = '';
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AddTaskCubit, AddTaskState>(
+    return BlocConsumer<HomeTaskCubit, HomeTaskState>(
   listener: (context, state) {
-    var cubit = AddTaskCubit.get(context);
-    if(state is HomePostImagePickedSuccessState){
-      Navigator.pop(context);
-      cubit.uploadImage(image: cubit.postImage!);
-    }
-    else if(state is UploadImageSuccess) {
-      image = state.imageUrl;
-    }
-    else if(state is AddTaskSuccess){
+    if (state is UpdateTaskSuccessState) {
       CherryToast.success(
-        title: const Text('Add Success'),
+        title: const Text('Edit Success'),
         animationType: AnimationType.fromTop,
       ).show(context);
-      Navigator.pop(context);
       HomeTaskCubit.get(context).getTasks();
-    }
-    else if(state is AddTaskError){
-      CherryToast.error(
-        title:  Text(state.error),
-        animationType: AnimationType.fromTop,
-      ).show(context);
+      TaskDetailsCubit.get(context).getTasksDetails(id: widget.task.id ?? '');
+      Navigator.pop(context);
     }
   },
   builder: (context, state) {
-    var cubit = AddTaskCubit.get(context);
+    var cubit = HomeTaskCubit.get(context);
     return Scaffold(
       appBar: AppBar(
-          title: const Text(
-            'Add new task',
-            style: TextStyle(
-              color: Color(0xFF24252C),
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-            ),
+        title: const Text(
+          'Edit Task Details',
+          style: TextStyle(
+            color: Color(0xFF24252C),
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
           ),
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Image.asset(ImageAssets.iconBack),
-          )
+        ),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Image.asset(ImageAssets.iconBack),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.all(10.0),
           child: Form(
             key: formKey,
             child: Column(
@@ -293,8 +289,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                     ),
                                   ],
                                   onChanged: (value) {
-                                    priorityController.text = '${value.toString()} Priority';
-                                    priority = value.toString();
+                                    priorityController.text = value.toString();
+                                   /* priority = value.toString();*/
                                   },
                                 ),
                               ),
@@ -323,7 +319,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     const Row(
                       children: [
                         Text(
-                          'Due date',
+                          'Status',
                           style: TextStyle(
                             color: Color(0xFF6E6A7C),
                             fontSize: 12,
@@ -335,69 +331,93 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     const SizedBox(
                       height: 10,
                     ),
-                    TextFormField(
-                      controller: dueDateController,
-                      keyboardType: TextInputType.datetime,
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        labelText: 'choose due date...',
-                        labelStyle: const TextStyle(
-                          color: Color(0xFF7F7F7F),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-
+                    Container(
+                      decoration: ShapeDecoration(
+                        color: const Color(0xFFF0ECFF),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        suffixIcon: IconButton(
-                          onPressed: (){
-                            setState(() {
-                              showDatePicker(
-                                context: context,
-                                firstDate: DateTime.now(),
-                                lastDate: DateTime(2030),
-                              ).then((onValue) {
-                                setState(() {
-                                  dueDateController.text = onValue.toString().split(' ')[0];
-                                });
-                              });
-                            });
-
-                          },
-                          icon: Icon(
-                            Icons.calendar_month,
-                            color: ColorManager.primary,
+                      ),
+                      child:TextFormField(
+                        controller: statusController,
+                        readOnly: true,
+                        style: const TextStyle(
+                          color: Color(0xFF5F33E1),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Status is Required';
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Status',
+                          labelStyle: const TextStyle(
+                            color: Color(0xFF5F33E1),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
                           ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide:  const BorderSide(width: 1, color: Color(0xFFBABABA)),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:  const BorderSide(width: 1, color: Color(0xFFBABABA)),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        border: OutlineInputBorder(
-                          borderSide:  const BorderSide(width: 1, color: Color(0xFFBABABA)),
-                          borderRadius: BorderRadius.circular(10),
+                          suffixIcon: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: SizedBox(
+                              width: 150,
+                              child: DropdownMenuItem(
+                                alignment: Alignment.centerRight,
+                                child: DropdownButton(
+                                  underline: const SizedBox(),
+                                  items: const [
+                                    DropdownMenuItem(
+                                      value: 'inprogress',
+                                      child: Text('InProgress'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'waiting',
+                                      child: Text('Waiting'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'finished',
+                                      child: Text('Finished'),
+                                    ),
+                                  ],
+                                  onChanged: (value) {
+                                    statusController.text = value.toString();
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                          focusedBorder:  OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          enabledBorder:OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                       ),
                     ),
                   ],
                 ),
+
                 const SizedBox(
                   height: 28,
                 ),
                 Conditional.single(
                   context: context,
-                  conditionBuilder: (context) => state is! AddTaskLoading,
+                  conditionBuilder: (context) => state is! UpdateTaskLoadingState,
                   widgetBuilder: (context) => ElevatedButton(
                     onPressed: (){
                       if(formKey.currentState!.validate()){
-                        cubit.addTask(
+                        cubit.updateTask(
                           title: titleController.text,
                           desc: descriptionController.text,
-                          priority: priority,
-                          dueDate: dueDateController.text,
-                          image: image,
+                          priority: priorityController.text,
+                          status: statusController.text,
+                            id: widget.task.id ?? ''
                         );
                       }
                     },
@@ -413,7 +433,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Add task',
+                          'Edit task',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white,
@@ -438,5 +458,3 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 );
   }
 }
-
-

@@ -35,18 +35,19 @@ class AddTaskCubit extends Cubit<AddTaskState> {
     required File image,
 }) async {
     emit(UploadImageLoading());
+    FormData formData = FormData.fromMap({
+      'image': await MultipartFile.fromFile(image.path),
+    });
     await DioHelper.postData(
       url: 'upload/image',
-      data: FormData.fromMap({
-        'image': await MultipartFile.fromFile(image.path),
-        }),
+      data: formData,
     ).then((value) {
       emit(UploadImageSuccess(value.data['image']));
     }).catchError((onError) {
       if (onError is DioException) {
         print(onError.message);
         print(onError.response);
-        print(onError.response!.data);
+        print(onError.response!.data['message']);
         emit(UploadImageError(onError.response!.data['message']));
       }
     });
@@ -58,7 +59,7 @@ class AddTaskCubit extends Cubit<AddTaskState> {
     required String priority ,
     required String dueDate,
     required String image,
-  }) async{
+  }) async {
     emit(AddTaskLoading());
     await DioHelper.postData(
       url: AppStrings.endPointTasks,
@@ -67,7 +68,7 @@ class AddTaskCubit extends Cubit<AddTaskState> {
         'desc': desc,
         'priority': priority,
         'dueDate': dueDate,
-        'image': image,
+        'image': 'image.jpg',
       },
     ).then((value)
     async {
@@ -82,4 +83,5 @@ class AddTaskCubit extends Cubit<AddTaskState> {
       }
     });
   }
+
 }

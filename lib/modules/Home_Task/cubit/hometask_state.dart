@@ -40,3 +40,24 @@ final class DeleteTaskErrorState extends HomeTaskState {
 
   DeleteTaskErrorState(this.message);
 }
+
+final class RefreshTokenLoadingState extends HomeTaskState {}
+
+final class RefreshTokenSuccessState extends HomeTaskState {}
+
+final class RefreshTokenErrorState extends HomeTaskState {
+  final String message;
+
+  RefreshTokenErrorState(this.message);
+}
+
+
+final class UpdateTaskLoadingState extends HomeTaskState {}
+
+final class UpdateTaskSuccessState extends HomeTaskState {}
+
+final class UpdateTaskErrorState extends HomeTaskState {
+  final String message;
+
+  UpdateTaskErrorState(this.message);
+}

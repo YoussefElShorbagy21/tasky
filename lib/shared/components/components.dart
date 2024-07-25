@@ -22,7 +22,7 @@ void showSelectPhotoOptions(BuildContext context) {
           return SingleChildScrollView(
             controller: scrollController,
             child: SelectPhotoOptionsScreen(
-              onTap: AddTaskCubit.get(context).getPostImage,
+             onTap: AddTaskCubit.get(context).getPostImage ,
             ),
           );
         }),

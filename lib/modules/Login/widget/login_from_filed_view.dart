@@ -28,6 +28,8 @@ class LoginFromFiled extends StatelessWidget {
             animationType: AnimationType.fromTop,
           ).show(context);
           await CacheHelper.saveData(key: 'TokenId', value: state.data['access_token']);
+          await CacheHelper.saveData(key: 'refreshToken', value: state.data['refresh_token']);
+          await CacheHelper.saveData(key: 'ID',value: state.data['_id']);
           navigateFish(context, const HomeTaskScreen());
         }
         else if (state is SingInErrorState) {

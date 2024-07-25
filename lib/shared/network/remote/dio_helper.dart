@@ -45,12 +45,11 @@ class DioHelper
     required String url,
     Map<String,dynamic>? query ,
     required dynamic data ,
-    String tokenVerify = ''
   }) async
   {
     token = CacheHelper.getData(key: 'TokenId');
     dio.options.headers = {
-      'Authorization':'Bearer ${tokenVerify.isEmpty ? token : tokenVerify}',
+      'Authorization':'Bearer $token',
     };
      return dio.post(
        url ,
@@ -68,6 +67,7 @@ class DioHelper
     token = CacheHelper.getData(key: 'TokenId');
     dio.options.headers = {
       'Authorization':'Bearer $token',
+      'Content-Type' : 'application/json',
     };
     return dio.put(
       url ,

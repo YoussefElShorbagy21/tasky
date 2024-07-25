@@ -6,6 +6,7 @@ import 'package:tasky/models/TasksModel/TasksModel.dart';
 import 'package:tasky/modules/Home_Task/cubit/hometask_cubit.dart';
 import 'package:tasky/shared/resources/asset_manager.dart';
 
+import '../../Edit_Task/edit_task_screen.dart';
 import '../../Task_Details/task_details_screen.dart';
 
 class MyTaskDetailsItem extends StatefulWidget {
@@ -51,7 +52,7 @@ class _MyTaskDetailsItemState extends State<MyTaskDetailsItem> {
         return InkWell(
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) =>
-            TaskDetailsScreen(taskModel: widget.taskModel)));
+            TaskDetailsScreen(id: widget.taskModel.id ?? '')));
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 10),
@@ -187,9 +188,13 @@ class _MyTaskDetailsItemState extends State<MyTaskDetailsItem> {
                   ),
                   itemBuilder: (BuildContext context) {
                     return [
-                      const PopupMenuItem<String>(
+                      PopupMenuItem<String>(
                           value: 'edit',
-                          child: Opacity(
+                          onTap:(){
+                            Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                                 EditTaskScreen(task: widget.taskModel,)));
+                          },
+                          child: const Opacity(
                             opacity: 0.87,
                             child: Text(
                               'Edit',
