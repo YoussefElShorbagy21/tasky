@@ -54,13 +54,17 @@ class _MyTaskProgressState extends State<MyTaskProgress> {
                         onPressed: () {
                           cubit.changeIndex(index);
                           if (index == 0) {
+                            cubit.status = '';
                             cubit.getTasks();
                           } else if (index == 1) {
-                            cubit.getTasks(status: 'inprogress');
+                            cubit.status = 'inprogress';
+                            cubit.getTasks();
                           } else if (index == 2) {
-                            cubit.getTasks(status: 'waiting');
+                            cubit.status = 'waiting';
+                            cubit.getTasks();
                           } else if (index == 3) {
-                            cubit.getTasks(status: 'finished');
+                            cubit.status = 'finished';
+                            cubit.getTasks();
                           }
                         },
                         style: ButtonStyle(

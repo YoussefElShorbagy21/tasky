@@ -40,20 +40,26 @@ class HomeTaskCubit extends Cubit<HomeTaskState> {
   }
 
   int i = 0 ;
-
+  String status = '';
+  int selectedPageNumber = 1;
   void changeIndex(int index){
     i = index;
     emit(ChangeIndexState());
   }
 
  List<TasksModel> tasksModel = [];
-  Future<void> getTasks({
-    String? status,
-}) async{
+  Future<void> getTasks() async{
     emit(TasksLoadingState());
-    String url = "${AppStrings.endPointTasks}?status=$status";
+    String url = "";
+    if(status.isNotEmpty && selectedPageNumber == 1){
+      url = '${AppStrings.endPointTasks}?status=$status&page=1';
+    }else if(selectedPageNumber != 1){
+      url = '${AppStrings.endPointTasks}?page=$selectedPageNumber';
+    }else if(status.isNotEmpty && selectedPageNumber != 1){
+      url = '${AppStrings.endPointTasks}?status=$status&page=$selectedPageNumber';
+    }
     await DioHelper.getDate(
-      url: status == null ? AppStrings.endPointTasks : url,
+      url: url.isEmpty? AppStrings.endPointTasks : url,
     ).then((value) {
       tasksModel = (value.data as List).map((e) => TasksModel.fromJson(e)).toList();
       emit(TasksSuccessState());

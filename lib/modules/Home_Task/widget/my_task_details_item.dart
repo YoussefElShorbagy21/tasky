@@ -29,15 +29,18 @@ class _MyTaskDetailsItemState extends State<MyTaskDetailsItem> {
             title: const Text('Task Deleted Successfully'),
             animationType: AnimationType.fromTop,
           ).show(context);
-
           if (cubit.i == 0) {
+            cubit.status = '';
             cubit.getTasks();
-          } else if (cubit.i == 1) {
-            cubit.getTasks(status: 'inprogress');
-          } else if (HomeTaskCubit.get(context).i == 2) {
-            cubit.getTasks(status: 'waiting');
+          } else if (cubit.i== 1) {
+            cubit.status = 'inprogress';
+            cubit.getTasks();
+          } else if (HomeTaskCubit.get(context).i ==  2) {
+            cubit.status = 'waiting';
+            cubit.getTasks();
           } else if (HomeTaskCubit.get(context).i == 3) {
-            cubit.getTasks(status: 'finished');
+            cubit.status = 'finished';
+            cubit.getTasks();
           }
         } else if (state is DeleteTaskErrorState) {
           CherryToast.error(

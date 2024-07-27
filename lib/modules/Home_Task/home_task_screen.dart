@@ -2,6 +2,7 @@ import 'package:cherry_toast/cherry_toast.dart';
 import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:number_pagination/number_pagination.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:tasky/modules/Home_Task/cubit/hometask_cubit.dart';
 import 'package:tasky/modules/Task_Details/task_details_screen.dart';
@@ -27,6 +28,7 @@ class _HomeTaskScreenState extends State<HomeTaskScreen> {
   Barcode? result;
 
   QRViewController? controller;
+
 
   @override
   Widget build(BuildContext context) {
@@ -168,6 +170,20 @@ class _HomeTaskScreenState extends State<HomeTaskScreen> {
                 ),
               ),
             ],
+          ),
+          bottomNavigationBar:  NumberPagination(
+            onPageChanged: (int pageNumber) {
+              setState(() {
+                cubit.selectedPageNumber = pageNumber;
+                cubit.getTasks();
+              });
+            },
+            threshold: 4,
+            pageTotal: 100,
+            pageInit:  cubit.selectedPageNumber, // picked number when init page
+            colorPrimary: Colors.white,
+            colorSub: ColorManager.primary,
+
           ),
         );
       },
