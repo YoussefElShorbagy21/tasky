@@ -76,34 +76,39 @@ class _HomeTaskScreenState extends State<HomeTaskScreen> {
               ),
             ),
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(22.0),
-            child: CustomScrollView(
-              slivers: [
-                const SliverToBoxAdapter(
-                  child: MyTaskProgress(),
-                ),
-                const SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: 16,
+          body: RefreshIndicator(
+            onRefresh: () async {
+              cubit.getTasks();
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(22.0),
+              child: CustomScrollView(
+                slivers: [
+                  const SliverToBoxAdapter(
+                    child: MyTaskProgress(),
                   ),
-                ),
-                state is TasksLoadingState
-                    ? const SliverToBoxAdapter(
-                        child: Center(child: CircularProgressIndicator()),
-                      )
-                    : cubit.tasksModel.isEmpty
-                        ? SliverToBoxAdapter(
-                            child: Center(
-                                child: Text("Empty Task",
-                                    style: TextStyle(
-                                      color: ColorManager.primary,
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                    ))),
-                          )
-                        : const MyTaskDetailsList(),
-              ],
+                  const SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 16,
+                    ),
+                  ),
+                  state is TasksLoadingState
+                      ? const SliverToBoxAdapter(
+                          child: Center(child: CircularProgressIndicator()),
+                        )
+                      : cubit.tasksModel.isEmpty
+                          ? SliverToBoxAdapter(
+                              child: Center(
+                                  child: Text("Empty Task",
+                                      style: TextStyle(
+                                        color: ColorManager.primary,
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                      ))),
+                            )
+                          : const MyTaskDetailsList(),
+                ],
+              ),
             ),
           ),
           floatingActionButton: Column(
