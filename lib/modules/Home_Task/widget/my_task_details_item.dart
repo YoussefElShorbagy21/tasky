@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tasky/models/TasksModel/TasksModel.dart';
 import 'package:tasky/modules/Home_Task/cubit/hometask_cubit.dart';
-import 'package:tasky/shared/resources/asset_manager.dart';
+import 'package:tasky/shared/resources/string_manager.dart';
 
 import '../../Edit_Task/edit_task_screen.dart';
 import '../../Task_Details/task_details_screen.dart';
@@ -64,7 +64,15 @@ class _MyTaskDetailsItemState extends State<MyTaskDetailsItem> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Image.asset(ImageAssets.imageItemTask),
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image(
+                      image: NetworkImage(
+                          '${AppStrings.baseUrl}images/${widget.taskModel.image ?? ''}'),
+                    ),
+                  ),
+                ),
                 const SizedBox(
                   width: 10,
                 ),

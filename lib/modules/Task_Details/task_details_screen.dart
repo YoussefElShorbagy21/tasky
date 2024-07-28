@@ -5,6 +5,7 @@ import 'package:tasky/modules/Home_Task/cubit/hometask_cubit.dart';
 import 'package:tasky/shared/resources/color_manager.dart';
 
 import '../../shared/resources/asset_manager.dart';
+import '../../shared/resources/string_manager.dart';
 import '../Edit_Task/edit_task_screen.dart';
 import 'cubit/task_details_cubit.dart';
 
@@ -16,8 +17,8 @@ class TaskDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-  create: (context) => TaskDetailsCubit()..getTasksDetails(id: id),
-  child: BlocConsumer<TaskDetailsCubit, TaskDetailsState>(
+      create: (context) => TaskDetailsCubit()..getTasksDetails(id: id),
+      child: BlocConsumer<TaskDetailsCubit, TaskDetailsState>(
         listener: (context, state) {},
         builder: (context, state) {
           var cubit = TaskDetailsCubit.get(context);
@@ -45,11 +46,15 @@ class TaskDetailsScreen extends StatelessWidget {
                   PopupMenuButton<String>(
                     onSelected: (value) {
                       if (value == 'edit') {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                            EditTaskScreen(task: cubit.tasksModelDetails!,)));
-                      }
-                      else if (value == 'delete') {
-                        HomeTaskCubit.get(context).deleteTask(taskId: cubit.tasksModelDetails?.id ?? '');
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditTaskScreen(
+                                      task: cubit.tasksModelDetails!,
+                                    )));
+                      } else if (value == 'delete') {
+                        HomeTaskCubit.get(context).deleteTask(
+                            taskId: cubit.tasksModelDetails?.id ?? '');
                         Navigator.pop(context);
                       }
                     },
@@ -62,9 +67,13 @@ class TaskDetailsScreen extends StatelessWidget {
                       return [
                         PopupMenuItem<String>(
                             value: 'edit',
-                            onTap:(){
-                              Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                               EditTaskScreen(task: cubit.tasksModelDetails!,)));
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => EditTaskScreen(
+                                            task: cubit.tasksModelDetails!,
+                                          )));
                             },
                             child: const Opacity(
                               opacity: 0.87,
@@ -76,8 +85,7 @@ class TaskDetailsScreen extends StatelessWidget {
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                            )
-                        ),
+                            )),
                         PopupMenuItem<String>(
                           value: 'delete',
                           child: const Opacity(
@@ -93,7 +101,8 @@ class TaskDetailsScreen extends StatelessWidget {
                             ),
                           ),
                           onTap: () {
-                            HomeTaskCubit.get(context).deleteTask(taskId: cubit.tasksModelDetails?.id ?? '');
+                            HomeTaskCubit.get(context).deleteTask(
+                                taskId: cubit.tasksModelDetails?.id ?? '');
                           },
                         ),
                       ];
@@ -101,184 +110,194 @@ class TaskDetailsScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              body: cubit.tasksModelDetails == null ? const Center(child: CircularProgressIndicator()):
-              SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Image.asset(ImageAssets.imageDetails),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 22.0),
+              body: cubit.tasksModelDetails == null
+                  ? const Center(child: CircularProgressIndicator())
+                  : SingleChildScrollView(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Text(
-                            cubit.tasksModelDetails?.title ?? '',
-                            style: const TextStyle(
-                              color: Color(0xFF24252C),
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700,
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image(
+                                image: NetworkImage(
+                                    '${AppStrings.baseUrl}images/${cubit.tasksModelDetails?.image ?? ''}'),
+                              ),
                             ),
                           ),
-
-                          Text(
-                            cubit.tasksModelDetails?.desc ?? '',
-                            style: const TextStyle(
-                              color: Color(0x9924252C),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-
-                            ),
-                          ),
-
                           const SizedBox(
                             height: 16,
                           ),
-                          Container(
-                            decoration: ShapeDecoration(
-                              color: const Color(0xFFF0ECFF),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Text(
-                                    'End Date',
-                                    style: TextStyle(
-                                      color: Color(0xFF6E6A7C),
-                                      fontSize: 9,
-                                      fontWeight: FontWeight.w400,
-
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 22.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  cubit.tasksModelDetails?.title ?? '',
+                                  style: const TextStyle(
+                                    color: Color(0xFF24252C),
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                Text(
+                                  cubit.tasksModelDetails?.desc ?? '',
+                                  style: const TextStyle(
+                                    color: Color(0x9924252C),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 16,
+                                ),
+                                Container(
+                                  decoration: ShapeDecoration(
+                                    color: const Color(0xFFF0ECFF),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
                                   ),
-
-                                  Row(
-                                    children: [
-                                      Text(
-                                        cubit.tasksModelDetails?.createdAt!.split('T')[0] ?? '',
-                                        style: const TextStyle(
-                                          color: Color(0xFF24252C),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Text(
+                                          'End Date',
+                                          style: TextStyle(
+                                            color: Color(0xFF6E6A7C),
+                                            fontSize: 9,
+                                            fontWeight: FontWeight.w400,
+                                          ),
                                         ),
-                                      ),
-                                      const Spacer(),
-                                      Icon(
-                                        Icons.calendar_month,
-                                        color: ColorManager.primary,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          Container(
-                            decoration: ShapeDecoration(
-                              color: const Color(0xFFF0ECFF),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    cubit.tasksModelDetails?.status ?? '',
-                                    style: const TextStyle(
-                                      color: Color(0xFF5F33E1),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-
+                                        Row(
+                                          children: [
+                                            Text(
+                                              cubit.tasksModelDetails
+                                                      ?.createdAt!
+                                                      .split('T')[0] ??
+                                                  '',
+                                              style: const TextStyle(
+                                                color: Color(0xFF24252C),
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                            const Spacer(),
+                                            Icon(
+                                              Icons.calendar_month,
+                                              color: ColorManager.primary,
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  const Spacer(),
-                                  Icon(
-                                    Icons.arrow_drop_down,
-                                    color: ColorManager.primary,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          Container(
-                            decoration: ShapeDecoration(
-                              color: const Color(0xFFF0ECFF),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.flag,
-                                    color: ColorManager.primary,
-                                  ),
-                                  Text(
-                                    cubit.tasksModelDetails?.priority ?? '',
-                                    style: const TextStyle(
-                                      color: Color(0xFF5F33E1),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-
+                                ),
+                                const SizedBox(
+                                  height: 16,
+                                ),
+                                Container(
+                                  decoration: ShapeDecoration(
+                                    color: const Color(0xFFF0ECFF),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
                                   ),
-                                  const Spacer(),
-                                  Icon(
-                                    Icons.arrow_drop_down,
-                                    color: ColorManager.primary,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(20.0),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          cubit.tasksModelDetails?.status ?? '',
+                                          style: const TextStyle(
+                                            color: Color(0xFF5F33E1),
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        const Spacer(),
+                                        Icon(
+                                          Icons.arrow_drop_down,
+                                          color: ColorManager.primary,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ],
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          Center(
-                            child: QrImageView(
-                              data: cubit.tasksModelDetails?.id ?? '',
-                              version: QrVersions.auto,
-                              size: 200.0,
+                                ),
+                                const SizedBox(
+                                  height: 16,
+                                ),
+                                Container(
+                                  decoration: ShapeDecoration(
+                                    color: const Color(0xFFF0ECFF),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(20.0),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.flag,
+                                          color: ColorManager.primary,
+                                        ),
+                                        Text(
+                                          cubit.tasksModelDetails?.priority ??
+                                              '',
+                                          style: const TextStyle(
+                                            color: Color(0xFF5F33E1),
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        const Spacer(),
+                                        Icon(
+                                          Icons.arrow_drop_down,
+                                          color: ColorManager.primary,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 16,
+                                ),
+                                Center(
+                                  child: QrImageView(
+                                    data: cubit.tasksModelDetails?.id ?? '',
+                                    version: QrVersions.auto,
+                                    size: 200.0,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
                     ),
-
-                  ],
-                ),
-              ),
             ),
           );
         },
       ),
-);
+    );
   }
 }

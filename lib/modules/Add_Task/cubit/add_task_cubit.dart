@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../shared/network/remote/dio_helper.dart';
 import '../../../shared/resources/string_manager.dart';
+import '../../Home_Task/cubit/hometask_cubit.dart';
 
 part 'add_task_state.dart';
 
@@ -36,7 +37,10 @@ class AddTaskCubit extends Cubit<AddTaskState> {
 }) async {
     emit(UploadImageLoading());
     FormData formData = FormData.fromMap({
-      'image': await MultipartFile.fromFile(image.path),
+      'image': await MultipartFile.fromBytes(
+        image.readAsBytesSync(),
+        filename: 'image.jpg',
+      ),
     });
     await DioHelper.postData(
       url: 'upload/image',
@@ -45,6 +49,11 @@ class AddTaskCubit extends Cubit<AddTaskState> {
       emit(UploadImageSuccess(value.data['image']));
     }).catchError((onError) {
       if (onError is DioException) {
+        if(onError.response!.statusCode == 401){
+          HomeTaskCubit().getRefreshToken().then((value) {
+            uploadImage(image: postImage!);
+          });
+        }
         print(onError.message);
         print(onError.response);
         print(onError.response!.data['message']);

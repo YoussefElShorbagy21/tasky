@@ -42,7 +42,17 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       cubit.uploadImage(image: cubit.postImage!);
     }
     else if(state is UploadImageSuccess) {
+      CherryToast.success(
+        title: const Text('Success Add photo'),
+        animationType: AnimationType.fromTop,
+      ).show(context);
       image = state.imageUrl;
+    }
+    else if(state is UploadImageError) {
+      CherryToast.error(
+        title:  Text(state.error),
+        animationType: AnimationType.fromTop,
+      ).show(context);
     }
     else if(state is AddTaskSuccess){
       CherryToast.success(
@@ -119,6 +129,55 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     ),
                   ),
                 ),
+                cubit.postImage == null ? const SizedBox() : Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Container(
+                    height: 200,
+                    width: double.infinity,
+                    decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.file(
+                            cubit.postImage!,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
+                          ),
+                        ),
+                        Positioned(
+                          top: 10,
+                          right: 10,
+                          child: InkWell(
+                            onTap: (){
+                              cubit.postImage = null;
+                              setState(() {});
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: ShapeDecoration(
+                                color: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: const Icon(
+                                Icons.close,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
 
                 const SizedBox(
                   height: 16,
