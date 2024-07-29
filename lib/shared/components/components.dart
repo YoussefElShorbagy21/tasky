@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tasky/modules/Add_Task/cubit/add_task_cubit.dart';
+import 'package:tasky/modules/Home_Task/cubit/hometask_cubit.dart';
 
 import 're_usable_select_photo_button.dart';
 
-void showSelectPhotoOptions(BuildContext context) {
+void showSelectPhotoOptions(BuildContext context,String edit) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -22,7 +23,7 @@ void showSelectPhotoOptions(BuildContext context) {
           return SingleChildScrollView(
             controller: scrollController,
             child: SelectPhotoOptionsScreen(
-             onTap: AddTaskCubit.get(context).getPostImage ,
+             onTap: edit == 'Edit' ? HomeTaskCubit.get(context).getPostImage : AddTaskCubit.get(context).getPostImage ,
             ),
           );
         }),

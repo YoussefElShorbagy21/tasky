@@ -1,12 +1,16 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:tasky/models/TasksModel/TasksModel.dart';
 import 'package:tasky/shared/network/local/cache_helper.dart';
 import 'package:tasky/shared/network/remote/dio_helper.dart';
 import 'package:tasky/shared/resources/string_manager.dart';
 
 import '../../../shared/components/constants.dart';
+import 'package:http_parser/http_parser.dart';
 
 
 part 'hometask_state.dart';
@@ -117,7 +121,57 @@ class HomeTaskCubit extends Cubit<HomeTaskState> {
   }
 
 
+  File? postImage;
+
+  var picker = ImagePicker();
+
+  Future<void> getPostImage(ImageSource imageSource) async {
+    final pickedFile = await picker.pickImage(source: imageSource);
+    if (pickedFile != null) {
+      postImage = File(pickedFile.path);
+      print(postImage.toString());
+      emit(HomePostImagePickedSuccessStateEdit());
+    } else {
+      print('No image selected');
+      emit(HomePostImagePickedErrorStateEdit());
+    }
+  }
+
+  Future<void> uploadImage({
+    required File image,
+  }) async {
+    emit(UploadImageLoadingHome());
+    final String mimeType = 'image/${image.path.split('/').last.split('.').last}';
+    FormData formData = FormData.fromMap({
+      'image': MultipartFile.fromBytes(
+        image.readAsBytesSync(),
+        filename: image.path.split('/').last,
+        contentType: MediaType.parse(mimeType),
+      ),
+    });
+    await DioHelper.postData(
+      url: 'upload/image',
+      data: formData,
+    ).then((value) {
+      emit(UploadImageSuccessHome(value.data['image']));
+    }).catchError((onError) {
+      if (onError is DioException) {
+        if(onError.response!.statusCode == 401){
+          HomeTaskCubit().getRefreshToken().then((value) {
+            uploadImage(image: postImage!);
+          });
+        }
+        print(onError.message);
+        print(onError.response);
+        print(onError.response!.data['message']);
+        emit(UploadImageErrorHome(onError.response!.data['message']));
+      }
+    });
+  }
+
+
   Future<void> updateTask({
+    required String image,
     required String title,
     required String desc,
     required String priority,
@@ -129,7 +183,7 @@ class HomeTaskCubit extends Cubit<HomeTaskState> {
     await DioHelper.putData(
       url: '${AppStrings.endPointTasks}/$id',
       data: {
-        "image": "path.png",
+        "image": image,
         "title": title,
         "desc": desc,
         "priority": priority,

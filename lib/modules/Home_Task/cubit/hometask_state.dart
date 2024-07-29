@@ -61,3 +61,21 @@ final class UpdateTaskErrorState extends HomeTaskState {
 
   UpdateTaskErrorState(this.message);
 }
+
+final class UploadImageLoadingHome extends HomeTaskState {}
+
+final class UploadImageSuccessHome extends HomeTaskState {
+  final String image;
+
+  UploadImageSuccessHome(this.image);
+}
+
+final class UploadImageErrorHome extends HomeTaskState {
+  final String message;
+
+  UploadImageErrorHome(this.message);
+}
+
+final class HomePostImagePickedSuccessStateEdit extends HomeTaskState {}
+
+final class HomePostImagePickedErrorStateEdit extends HomeTaskState {}

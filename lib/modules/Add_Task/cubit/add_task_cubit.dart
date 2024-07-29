@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../shared/network/remote/dio_helper.dart';
 import '../../../shared/resources/string_manager.dart';
 import '../../Home_Task/cubit/hometask_cubit.dart';
-
+import 'package:http_parser/http_parser.dart';
 part 'add_task_state.dart';
 
 class AddTaskCubit extends Cubit<AddTaskState> {
@@ -36,10 +36,12 @@ class AddTaskCubit extends Cubit<AddTaskState> {
     required File image,
 }) async {
     emit(UploadImageLoading());
+    final String mimeType = 'image/${image.path.split('/').last.split('.').last}';
     FormData formData = FormData.fromMap({
-      'image': await MultipartFile.fromBytes(
+      'image': MultipartFile.fromBytes(
         image.readAsBytesSync(),
-        filename: 'image.jpg',
+        filename: image.path.split('/').last,
+        contentType: MediaType.parse(mimeType),
       ),
     });
     await DioHelper.postData(
@@ -77,7 +79,7 @@ class AddTaskCubit extends Cubit<AddTaskState> {
         'desc': desc,
         'priority': priority,
         'dueDate': dueDate,
-        'image': 'image.jpg',
+        'image': image,
       },
     ).then((value)
     async {

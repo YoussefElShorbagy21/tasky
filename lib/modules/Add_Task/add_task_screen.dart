@@ -60,6 +60,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         animationType: AnimationType.fromTop,
       ).show(context);
       Navigator.pop(context);
+      cubit.postImage == null ;
       HomeTaskCubit.get(context).getTasks();
     }
     else if(state is AddTaskError){
@@ -97,7 +98,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
               children: [
                 InkWell(
                   onTap: (){
-                    showSelectPhotoOptions(context);
+                    showSelectPhotoOptions(context,'');
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal:12,vertical: 12),

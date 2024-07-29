@@ -9,6 +9,7 @@ import 'package:tasky/modules/Home_Task/cubit/hometask_cubit.dart';
 import '../../shared/components/components.dart';
 import '../../shared/resources/asset_manager.dart';
 import '../../shared/resources/color_manager.dart';
+import '../../shared/resources/string_manager.dart';
 
 class EditTaskScreen extends StatefulWidget {
   const EditTaskScreen({super.key, required this.task});
@@ -29,12 +30,16 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
 
   final TextEditingController statusController = TextEditingController();
 
+  String image = '';
+
+  bool isEdit = true;
   @override
   void initState() {
     titleController.text = widget.task.title ?? '';
     descriptionController.text = widget.task.desc ?? '';
     priorityController.text = widget.task.priority ?? '';
     statusController.text = widget.task.status ?? '' ;
+    image = widget.task.image ?? '';
     super.initState();
   }
 
@@ -42,13 +47,29 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<HomeTaskCubit, HomeTaskState>(
   listener: (context, state) {
+    var cubit = HomeTaskCubit.get(context);
+    if(state is HomePostImagePickedSuccessStateEdit){
+      Navigator.pop(context);
+      cubit.uploadImage(image: cubit.postImage!);
+    }
     if (state is UpdateTaskSuccessState) {
       CherryToast.success(
         title: const Text('Edit Success'),
         animationType: AnimationType.fromTop,
       ).show(context);
       HomeTaskCubit.get(context).getTasks();
+      cubit.postImage = null;
       Navigator.pop(context);
+    }
+    else if(state is UploadImageSuccessHome){
+      image = state.image ;
+      isEdit = false;
+    }
+    else if (state is UpdateTaskErrorState){
+      CherryToast.error(
+        title: Text(state.message),
+        animationType: AnimationType.fromTop,
+      ).show(context);
     }
   },
   builder: (context, state) {
@@ -79,7 +100,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
               children: [
                 InkWell(
                   onTap: (){
-                    showSelectPhotoOptions(context);
+                    showSelectPhotoOptions(context, 'Edit');
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal:12,vertical: 12),
@@ -111,7 +132,79 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                     ),
                   ),
                 ),
-
+               cubit.postImage == null ? Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Container(
+                    height: MediaQuery.sizeOf(context).height / 2,
+                    width: double.infinity,
+                    decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.network(
+                            '${AppStrings.baseUrl}images/${widget.task.image ?? ''}',
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ) : Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Container(
+                    height: MediaQuery.sizeOf(context).height / 2,
+                    width: double.infinity,
+                    decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.file(
+                            cubit.postImage!,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
+                          ),
+                        ),
+                        Positioned(
+                          top: 10,
+                          right: 10,
+                          child: InkWell(
+                            onTap: (){
+                              cubit.postImage = null;
+                              isEdit = true;
+                              setState(() {});
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: ShapeDecoration(
+                                color: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: const Icon(
+                                Icons.close,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
                 const SizedBox(
                   height: 16,
                 ),
@@ -135,6 +228,16 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                     TextFormField(
                       controller: titleController,
                       keyboardType: TextInputType.text,
+                      onChanged: (value) {
+                        if(widget.task.title == value){
+                          isEdit = true;
+                        }else{
+                          isEdit = false;
+                        }
+                        setState(() {
+
+                        });
+                      },
                       decoration: InputDecoration(
                         labelText: 'Enter title here...',
                         labelStyle: const TextStyle(
@@ -183,6 +286,16 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                     TextFormField(
                       controller: descriptionController,
                       keyboardType: TextInputType.multiline,
+                      onChanged: (value) {
+                        if(widget.task.desc == value){
+                          isEdit = true;
+                        }else{
+                          isEdit = false;
+                        }
+                        setState(() {
+
+                        });
+                      },
                       maxLines: null,
                       decoration: InputDecoration(
                         labelText: 'Enter description here...',
@@ -286,7 +399,12 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                                   ],
                                   onChanged: (value) {
                                     priorityController.text = value.toString();
-                                   /* priority = value.toString();*/
+                                    if(widget.task.priority == value){
+                                      isEdit = true;
+                                    }else{
+                                      isEdit = false;
+                                    }
+                                    setState(() {});
                                   },
                                 ),
                               ),
@@ -379,6 +497,12 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                                   ],
                                   onChanged: (value) {
                                     statusController.text = value.toString();
+                                    if(widget.task.status == value){
+                                      isEdit = true;
+                                    }else{
+                                      isEdit = false;
+                                    }
+                                    setState(() {});
                                   },
                                 ),
                               ),
@@ -406,11 +530,12 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                   context: context,
                   conditionBuilder: (context) => state is! UpdateTaskLoadingState,
                   widgetBuilder: (context) => ElevatedButton(
-                    onPressed: (){
+                    onPressed: isEdit == true ? null : (){
                       if(formKey.currentState!.validate()){
                         cubit.updateTask(
                           title: titleController.text,
                           desc: descriptionController.text,
+                          image: image,
                           priority: priorityController.text,
                           status: statusController.text,
                             id: widget.task.id ?? ''
@@ -419,7 +544,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                     },
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 50),
-                      backgroundColor: ColorManager.primary,
+                      backgroundColor: isEdit == true ? Colors.grey : ColorManager.primary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

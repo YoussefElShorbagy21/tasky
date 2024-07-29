@@ -117,13 +117,15 @@ class TaskDetailsScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image(
-                                image: NetworkImage(
-                                    '${AppStrings.baseUrl}images/${cubit.tasksModelDetails?.image ?? ''}'),
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image(
+                                  image: NetworkImage(
+                                      '${AppStrings.baseUrl}images/${cubit.tasksModelDetails?.image ?? ''}'),
+                                ),
                               ),
                             ),
                           ),
