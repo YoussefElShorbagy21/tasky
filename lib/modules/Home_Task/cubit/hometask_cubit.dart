@@ -62,12 +62,12 @@ class HomeTaskCubit extends Cubit<HomeTaskState> {
       url: url,
     ).then((value) {
       final List<TasksModel> newItems = (value.data as List).map((e) => TasksModel.fromJson(e)).toList();
-  /*    if (selectedPageNumber == 1) {
+      if (selectedPageNumber == 1) {
         tasksModel = newItems; // For the first page, replace the list
       }
       else {
         tasksModel.addAll(newItems); // For subsequent pages, append to the list
-      }*/
+      }
 
       if (newItems.isEmpty) {
         emit(TasksSuccessState(isLastPage: true));
