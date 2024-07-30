@@ -23,7 +23,11 @@ final class ChangeIndexState extends HomeTaskState {}
 
 final class TasksLoadingState extends HomeTaskState {}
 
-final class TasksSuccessState extends HomeTaskState {}
+final class TasksSuccessState extends HomeTaskState {
+  final bool isLastPage;
+
+  TasksSuccessState({required this.isLastPage});
+}
 
 final class TasksErrorState extends HomeTaskState {
   final String message;

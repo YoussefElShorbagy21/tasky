@@ -54,19 +54,28 @@ class HomeTaskCubit extends Cubit<HomeTaskState> {
  List<TasksModel> tasksModel = [];
   Future<void> getTasks() async{
     emit(TasksLoadingState());
-    String url = "";
-    if(status.isNotEmpty && selectedPageNumber == 1){
-      url = '${AppStrings.endPointTasks}?status=$status&page=1';
-    }else if(selectedPageNumber != 1){
-      url = '${AppStrings.endPointTasks}?page=$selectedPageNumber';
-    }else if(status.isNotEmpty && selectedPageNumber != 1){
-      url = '${AppStrings.endPointTasks}?status=$status&page=$selectedPageNumber';
+    String url = '${AppStrings.endPointTasks}?page=$selectedPageNumber';
+    if (status.isNotEmpty) {
+      url += '&status=$status';
     }
     await DioHelper.getDate(
-      url: url.isEmpty? AppStrings.endPointTasks : url,
+      url: url,
     ).then((value) {
-      tasksModel = (value.data as List).map((e) => TasksModel.fromJson(e)).toList();
-      emit(TasksSuccessState());
+      final List<TasksModel> newItems = (value.data as List).map((e) => TasksModel.fromJson(e)).toList();
+  /*    if (selectedPageNumber == 1) {
+        tasksModel = newItems; // For the first page, replace the list
+      }
+      else {
+        tasksModel.addAll(newItems); // For subsequent pages, append to the list
+      }*/
+
+      if (newItems.isEmpty) {
+        emit(TasksSuccessState(isLastPage: true));
+      }
+      else {
+        emit(TasksSuccessState(isLastPage: false));
+      }
+      // emit(TasksSuccessState(isLastPage: false));
     }).catchError((onError) {
       if (onError is DioException) {
         if(onError.response!.statusCode == 401){
@@ -201,4 +210,6 @@ class HomeTaskCubit extends Cubit<HomeTaskState> {
       }
     });
   }
+
+
 }
