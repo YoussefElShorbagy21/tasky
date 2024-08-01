@@ -29,19 +29,7 @@ class _MyTaskDetailsItemState extends State<MyTaskDetailsItem> {
             title: const Text('Task Deleted Successfully'),
             animationType: AnimationType.fromTop,
           ).show(context);
-          if (cubit.i == 0) {
-            cubit.status = '';
-            cubit.getTasks();
-          } else if (cubit.i== 1) {
-            cubit.status = 'inprogress';
-            cubit.getTasks();
-          } else if (HomeTaskCubit.get(context).i ==  2) {
-            cubit.status = 'waiting';
-            cubit.getTasks();
-          } else if (HomeTaskCubit.get(context).i == 3) {
-            cubit.status = 'finished';
-            cubit.getTasks();
-          }
+          cubit.updateStatusAndRefresh(cubit.i);
         } else if (state is DeleteTaskErrorState) {
           CherryToast.error(
             title: Text(state.message),
@@ -64,14 +52,10 @@ class _MyTaskDetailsItemState extends State<MyTaskDetailsItem> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image(
-                      image: NetworkImage(
-                          '${AppStrings.baseUrl}images/${widget.taskModel.image ?? ''}'),
-                    ),
-                  ),
+                CircleAvatar(
+                  radius: 35,
+                  backgroundImage: NetworkImage(
+                      '${AppStrings.baseUrl}images/${widget.taskModel.image ?? ''}'),
                 ),
                 const SizedBox(
                   width: 10,

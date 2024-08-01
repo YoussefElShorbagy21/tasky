@@ -2,7 +2,6 @@ import 'package:cherry_toast/cherry_toast.dart';
 import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:tasky/modules/Home_Task/cubit/hometask_cubit.dart';
 import 'package:tasky/modules/Task_Details/task_details_screen.dart';
@@ -28,10 +27,10 @@ class _HomeTaskScreenState extends State<HomeTaskScreen> {
   Barcode? result;
 
   QRViewController? controller;
-  final PagingController<int, dynamic> pagingController = PagingController(firstPageKey: 1);
+
   @override
   void initState() {
-    pagingController.addPageRequestListener((pageKey) {
+    HomeTaskCubit.get(context).pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
     super.initState();
@@ -39,30 +38,30 @@ class _HomeTaskScreenState extends State<HomeTaskScreen> {
 
 
   Future<void> _fetchPage(int pageKey) async {
+    var cubit = HomeTaskCubit.get(context);
     try {
-      var cubit = HomeTaskCubit.get(context);
       cubit.selectedPageNumber = pageKey;
       await cubit.getTasks();
       final newItems = cubit.tasksModel;
       final state = cubit.state;
       if (state is TasksSuccessState) {
         if (state.isLastPage) {
-          pagingController.appendLastPage(newItems);
+          cubit.pagingController.appendLastPage(newItems);
         } else {
           final nextPageKey = pageKey + 1;
-          pagingController.appendPage(newItems, nextPageKey);
+          cubit.pagingController.appendPage(newItems, nextPageKey);
         }
       }
       print( cubit.selectedPageNumber);
     } catch (error) {
-      pagingController.error = error;
+      cubit.pagingController.error = error;
       print(error);
     }
   }
 
   @override
   void dispose() {
-    pagingController.dispose();
+    HomeTaskCubit.get(context).pagingController.dispose();
     super.dispose();
   }
 
@@ -82,7 +81,7 @@ class _HomeTaskScreenState extends State<HomeTaskScreen> {
           var cubit = HomeTaskCubit.get(context);
           return RefreshIndicator(
             onRefresh:  () => Future.sync(
-                  () => pagingController.refresh(),
+                  () => cubit.pagingController.refresh(),
             ),
             child: Scaffold(
               appBar: AppBar(
@@ -129,11 +128,7 @@ class _HomeTaskScreenState extends State<HomeTaskScreen> {
                             height: 16,
                           ),
                         ),
-                       /* state is TasksLoadingState
-                            ? const SliverToBoxAdapter(
-                                child:SizedBox() *//*Center(child: CircularProgressIndicator())*//*,
-                              )
-                            : */cubit.tasksModel.isEmpty
+                        cubit.tasksModel.isEmpty
                                 ? SliverToBoxAdapter(
                                     child: Center(
                                         child: Text("Empty Task",
@@ -146,7 +141,7 @@ class _HomeTaskScreenState extends State<HomeTaskScreen> {
                                 :  SliverFillRemaining(
                           fillOverscroll: true,
                                   child: MyTaskDetailsList(
-                                      pagingController: pagingController,
+                                      pagingController: cubit.pagingController,
                                                     ),
                                 ),
                       ],

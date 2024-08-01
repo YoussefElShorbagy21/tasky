@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:tasky/models/TasksModel/TasksModel.dart';
 import 'package:tasky/shared/network/local/cache_helper.dart';
 import 'package:tasky/shared/network/remote/dio_helper.dart';
@@ -44,14 +45,19 @@ class HomeTaskCubit extends Cubit<HomeTaskState> {
   }
 
   int i = 0 ;
-  String status = '';
-  int selectedPageNumber = 1;
+
   void changeIndex(int index){
     i = index;
     emit(ChangeIndexState());
   }
 
+  String status = '';
+  int selectedPageNumber = 1;
  List<TasksModel> tasksModel = [];
+  final PagingController<int, TasksModel> pagingController =
+  PagingController(firstPageKey: 1);
+
+
   Future<void> getTasks() async{
     emit(TasksLoadingState());
     String url = '${AppStrings.endPointTasks}?page=$selectedPageNumber';
@@ -63,10 +69,12 @@ class HomeTaskCubit extends Cubit<HomeTaskState> {
     ).then((value) {
       final List<TasksModel> newItems = (value.data as List).map((e) => TasksModel.fromJson(e)).toList();
       if (selectedPageNumber == 1) {
-        tasksModel = newItems; // For the first page, replace the list
+        tasksModel = newItems;
+        pagingController.itemList = tasksModel;
       }
       else {
-        tasksModel.addAll(newItems); // For subsequent pages, append to the list
+        tasksModel.addAll(newItems);
+        pagingController.appendPage(newItems, selectedPageNumber + 1);
       }
 
       if (newItems.isEmpty) {
@@ -75,7 +83,6 @@ class HomeTaskCubit extends Cubit<HomeTaskState> {
       else {
         emit(TasksSuccessState(isLastPage: false));
       }
-      // emit(TasksSuccessState(isLastPage: false));
     }).catchError((onError) {
       if (onError is DioException) {
         if(onError.response!.statusCode == 401){
@@ -85,12 +92,33 @@ class HomeTaskCubit extends Cubit<HomeTaskState> {
         }
         debugPrint(onError.response!.data['message']);
         debugPrint(onError.message);
+        pagingController.error = onError.message;
         emit(TasksErrorState(onError.response!.data['message']));
       }
     });
   }
 
-
+  Future<void> updateStatusAndRefresh(int index) async {
+    switch (index) {
+      case 0:
+        status = '';
+        break;
+      case 1:
+        status = 'inprogress';
+        break;
+      case 2:
+        status = 'waiting';
+        break;
+      case 3:
+        status = 'finished';
+        break;
+    }
+    selectedPageNumber = 1;
+    pagingController.itemList = [];
+    tasksModel.clear();
+    await getTasks();
+    emit(UpdateStatusAndRefreshState());
+  }
 
   Future<void> deleteTask({
     required String taskId,
@@ -100,10 +128,14 @@ class HomeTaskCubit extends Cubit<HomeTaskState> {
       url: '${AppStrings.endPointTasks}/$taskId',
     ).then((value)
     {
-      print(i);
       emit(DeleteTaskSuccessState());
     }).catchError((onError) {
       if (onError is DioException) {
+        if(onError.response!.statusCode == 401){
+        getRefreshToken().then((value) {
+            deleteTask(taskId: taskId);
+          });
+        }
         debugPrint(onError.response!.data['message']);
         debugPrint(onError.message);
         emit(DeleteTaskErrorState(onError.response!.data['message']));
@@ -166,7 +198,7 @@ class HomeTaskCubit extends Cubit<HomeTaskState> {
     }).catchError((onError) {
       if (onError is DioException) {
         if(onError.response!.statusCode == 401){
-          HomeTaskCubit().getRefreshToken().then((value) {
+         getRefreshToken().then((value) {
             uploadImage(image: postImage!);
           });
         }
@@ -204,6 +236,18 @@ class HomeTaskCubit extends Cubit<HomeTaskState> {
       emit(UpdateTaskSuccessState());
     }).catchError((onError) {
       if (onError is DioException) {
+        if(onError.response!.statusCode == 401){
+          getRefreshToken().then((value) {
+            updateTask(
+              image: image,
+              title: title,
+              desc: desc,
+              priority: priority,
+              status: status,
+              id: id,
+            );
+          });
+        }
         debugPrint(onError.response!.data['message']);
         debugPrint(onError.message);
         emit(UpdateTaskErrorState(onError.response!.data['message']));

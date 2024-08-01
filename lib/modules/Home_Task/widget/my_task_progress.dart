@@ -12,20 +12,14 @@ class MyTaskProgress extends StatefulWidget {
 }
 
 class _MyTaskProgressState extends State<MyTaskProgress> {
-  final List<String> item = [
-    'All',
-    'Inpogress',
-    'Waiting',
-    'Finished'
-  ];
-
+  final List<String> item = ['All', 'inprogress', 'waiting', 'finished'];
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomeTaskCubit, HomeTaskState>(
-      listener: (context, state) {},
+      listener: (context, state) async {},
       builder: (context, state) {
-        var cubit = HomeTaskCubit.get(context);
+        final cubit = context.watch<HomeTaskCubit>();
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -41,7 +35,6 @@ class _MyTaskProgressState extends State<MyTaskProgress> {
             const SizedBox(
               height: 16,
             ),
-
             SizedBox(
               height: 60,
               child: ListView.builder(
@@ -53,19 +46,7 @@ class _MyTaskProgressState extends State<MyTaskProgress> {
                       child: ElevatedButton(
                         onPressed: () {
                           cubit.changeIndex(index);
-                          if (index == 0) {
-                            cubit.status = '';
-                            cubit.getTasks();
-                          } else if (index == 1) {
-                            cubit.status = 'inprogress';
-                            cubit.getTasks();
-                          } else if (index == 2) {
-                            cubit.status = 'waiting';
-                            cubit.getTasks();
-                          } else if (index == 3) {
-                            cubit.status = 'finished';
-                            cubit.getTasks();
-                          }
+                         cubit.updateStatusAndRefresh(index);
                         },
                         style: ButtonStyle(
                           backgroundColor: WidgetStateProperty.all(
@@ -83,18 +64,15 @@ class _MyTaskProgressState extends State<MyTaskProgress> {
                           style: TextStyle(
                             color: cubit.i == index
                                 ? Colors.white
-                                : const Color(
-                                0xFF7C7C80),
+                                : const Color(0xFF7C7C80),
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),
                     );
-                  }
-              ),
+                  }),
             ),
-
           ],
         );
       },

@@ -53,9 +53,9 @@ class TaskDetailsScreen extends StatelessWidget {
                                       task: cubit.tasksModelDetails!,
                                     )));
                       } else if (value == 'delete') {
-                        HomeTaskCubit.get(context).deleteTask(
+                       /* HomeTaskCubit.get(context).deleteTask(
                             taskId: cubit.tasksModelDetails?.id ?? '');
-                        Navigator.pop(context);
+                        Navigator.pop(context);*/
                       }
                     },
                     icon: const Icon(Icons.more_vert),
@@ -103,6 +103,7 @@ class TaskDetailsScreen extends StatelessWidget {
                           onTap: () {
                             HomeTaskCubit.get(context).deleteTask(
                                 taskId: cubit.tasksModelDetails?.id ?? '');
+                            Navigator.pop(context);
                           },
                         ),
                       ];
@@ -121,7 +122,7 @@ class TaskDetailsScreen extends StatelessWidget {
                             child: Padding(
                               padding: const EdgeInsets.all(10.0),
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(50),
                                 child: Image(
                                   image: NetworkImage(
                                       '${AppStrings.baseUrl}images/${cubit.tasksModelDetails?.image ?? ''}'),

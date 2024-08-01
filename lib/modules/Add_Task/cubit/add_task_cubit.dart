@@ -87,6 +87,11 @@ class AddTaskCubit extends Cubit<AddTaskState> {
     }
     ).catchError((onError){
       if(onError is DioException) {
+        if(onError.response!.statusCode == 401){
+          HomeTaskCubit().getRefreshToken().then((value) {
+            addTask(title: title, desc: desc, priority: priority, dueDate: dueDate, image: image);
+          });
+        }
         print(onError.message);
         print(onError.response);
         print(onError.response!.data);

@@ -83,3 +83,6 @@ final class UploadImageErrorHome extends HomeTaskState {
 final class HomePostImagePickedSuccessStateEdit extends HomeTaskState {}
 
 final class HomePostImagePickedErrorStateEdit extends HomeTaskState {}
+
+
+final class UpdateStatusAndRefreshState extends HomeTaskState {}

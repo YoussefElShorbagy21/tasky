@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../models/TasksModel/TasksModel.dart';
 import '../../../shared/network/remote/dio_helper.dart';
 import '../../../shared/resources/string_manager.dart';
+import '../../Home_Task/cubit/hometask_cubit.dart';
 
 part 'task_details_state.dart';
 
@@ -25,6 +26,11 @@ class TaskDetailsCubit extends Cubit<TaskDetailsState> {
       emit(TasksDetailsSuccessState());
     }).catchError((onError) {
       if (onError is DioException) {
+        if(onError.response!.statusCode == 401){
+          HomeTaskCubit().getRefreshToken().then((value) {
+            getTasksDetails(id: id);
+          });
+        }
         debugPrint(onError.response!.data['message']);
         debugPrint(onError.message);
         emit(TasksDetailsErrorState(onError.response!.data['message']));

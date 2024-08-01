@@ -11,8 +11,7 @@ class MyTaskDetailsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<HomeTaskCubit, HomeTaskState>(
-      listener: (context, state) {},
+    return BlocBuilder<HomeTaskCubit, HomeTaskState>(
       builder: (context, state) {
         var cubit = HomeTaskCubit.get(context).tasksModel;
         return PagedListView(
@@ -29,14 +28,7 @@ class MyTaskDetailsList extends StatelessWidget {
             transitionDuration: const Duration(milliseconds: 500),
             animateTransitions: true,
           ),
-        ); /*SliverList.builder(
-          itemCount: cubit.length,
-          itemBuilder: (BuildContext context, int index) {
-            return MyTaskDetailsItem(
-              taskModel: cubit[index],
-            );
-          },
-        );*/
+        );
       },
     );
   }

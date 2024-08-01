@@ -48,12 +48,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       ).show(context);
       image = state.imageUrl;
     }
-    else if(state is UploadImageError) {
-      CherryToast.error(
-        title:  Text(state.error),
-        animationType: AnimationType.fromTop,
-      ).show(context);
-    }
     else if(state is AddTaskSuccess){
       CherryToast.success(
         title: const Text('Add Success'),
