@@ -42,7 +42,8 @@ dependencies:
   flutter_conditional_rendering: ^2.1.0
   cherry_toast: ^1.11.0
   qr_flutter: ^4.1.0
-  qr_code_scanner: ^1.0.1
+  qr_code_scanner_plus: ^2.0.6
+#  qr_code_scanner: ^1.0.1
   image_picker: ^1.1.2
   device_preview: ^1.2.0
   infinite_scroll_pagination: ^4.0.0
